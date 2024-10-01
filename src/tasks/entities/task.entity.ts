@@ -13,6 +13,9 @@ export class Task {
   @Column({ nullable: true })
   isCompleted: boolean;
 
-  @ManyToOne(() => Category, (category) => category.tasks)
+  @ManyToOne(() => Category, (category) => category.tasks, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
   category: Category;
 }
