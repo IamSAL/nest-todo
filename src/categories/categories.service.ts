@@ -11,39 +11,45 @@ export class CategoriesService {
     @InjectRepository(Category)
     private categoryRepository: Repository<Category>,
   ) {}
-  create(createCategoryDto: CreateCategoryDto) {
+
+  async create(
+    createCategoryDto: CreateCategoryDto,
+  ): Promise<{ message: string; category: Category }> {
     const newCategory = this.categoryRepository.create(createCategoryDto);
-    return this.categoryRepository.save(newCategory);
+    const category = await this.categoryRepository.save(newCategory);
+    return { message: 'Category created successfully', category };
   }
 
-  findAll() {
+  async findAll(): Promise<Category[]> {
     return this.categoryRepository.find();
   }
 
-  async findOne(id: number) {
-    const result = await this.categoryRepository.findOneBy({ id });
-    if (result) {
-      return result;
-    } else {
-      throw new NotFoundException('Category not found');
+  async findOne(id: number): Promise<Category> {
+    const category = await this.categoryRepository.findOneBy({ id });
+    if (!category) {
+      throw new NotFoundException(`Category with ID ${id} not found`);
     }
+    return category;
   }
 
-  async update(id: number, updateCategoryDto: UpdateCategoryDto) {
-    const result = await this.categoryRepository.update(id, updateCategoryDto);
-    if (result.affected === 0) {
-      throw new NotFoundException('Category not found');
-    } else {
-      return { message: 'Category updated successfully' };
+  async update(
+    id: number,
+    updateCategoryDto: UpdateCategoryDto,
+  ): Promise<{ message: string; category: Category }> {
+    const category = await this.categoryRepository.findOneBy({ id });
+    if (!category) {
+      throw new NotFoundException(`Category with ID ${id} not found`);
     }
+    Object.assign(category, updateCategoryDto);
+    await this.categoryRepository.save(category);
+    return { message: 'Category updated successfully', category };
   }
 
-  async remove(id: number) {
+  async remove(id: number): Promise<{ message: string }> {
     const result = await this.categoryRepository.delete(id);
     if (result.affected === 0) {
-      throw new NotFoundException('Category not found');
-    } else {
-      return { message: 'Category deleted successfully' };
+      throw new NotFoundException(`Category with ID ${id} not found`);
     }
+    return { message: 'Category deleted successfully' };
   }
 }
