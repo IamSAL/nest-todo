@@ -10,10 +10,15 @@ import { ConfigModule } from '@nestjs/config';
 import { ApiConfigService } from './shared/services/api-config.service';
 import { DataSource } from 'typeorm';
 import { addTransactionalDataSource } from 'typeorm-transactional';
+import { LinksModule } from './links/links.module';
 
 @Module({
   imports: [
     CategoriesModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: ['.env', '.env.local'],
+    }),
     TypeOrmModule.forRootAsync({
       imports: [SharedModule],
       useFactory: (configService: ApiConfigService) =>
@@ -32,10 +37,7 @@ import { addTransactionalDataSource } from 'typeorm-transactional';
     TasksModule,
     SharedModule,
     AuthModule,
-    ConfigModule.forRoot({
-      isGlobal: true,
-      envFilePath: ['.env', '.env.local'],
-    }),
+    LinksModule,
   ],
   controllers: [AppController],
   providers: [AppService],
