@@ -7,6 +7,11 @@ import { Repository } from 'typeorm';
 
 @Injectable()
 export class LinksService {
+  async createBulk(createLinkDtos: CreateLinkDto[]) {
+    const newLinks = this.linkRepository.create(createLinkDtos);
+    await this.linkRepository.save(newLinks);
+    return { message: 'Links created successfully', links: newLinks };
+  }
   constructor(
     @InjectRepository(Link)
     private linkRepository: Repository<Link>,
