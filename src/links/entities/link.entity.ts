@@ -1,14 +1,20 @@
-import { Task } from 'src/tasks/entities/task.entity';
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { User } from 'src/auth/entities/user.entity';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 
 @Entity()
 export class Link {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
   @Column()
   platform: string;
+
   @Column()
   url: string;
+
   @Column()
   iconUrl: string;
+
+  @ManyToOne(() => User, (user) => user.links)
+  user: User;
 }
